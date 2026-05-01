@@ -7,21 +7,35 @@
 - Frontend: React, TypeScript, Vite
 - Backend: Java, Spring Boot, Spring Data JPA
 - Database: PostgreSQL
-- Infrastructure: Docker, Docker Compose
+- Infrastructure: Docker
 - Notification: LINE Messaging API
 
 ## 設計
 ### データベース設計 (ER図)
-- TASKS: 掃除場所、対象、頻度（日数）、手順、次回予定日
-- TASK_HISTORIES: 掃除の実施記録（いつ、どのタスクを完了したか）
+```mermaid
+erDiagram
+    TASKS ||--o{ TASK_HISTORIES : "has"
+    TASKS {
+        int id PK
+        string place
+        string target
+        int interval_days
+        string method
+        date next_due_date
+    }
+
+    TASK_HISTORIES {
+        int id PK
+        int task_id FK
+        date completed_at
+    }
+```
 
 ### API エンドポイント
-- GET /tasks : タスク一覧の取得
-- POST /tasks/{id}/complete : 掃除完了の記録と次回予定日の更新
-
-## セットアップ方法
-1. リポジトリをクローン
-2. `.env` ファイルを作成し、DBの情報を設定
-3. 以下のコマンドを実行
-   ```bash
-   docker compose up -d
+| メソッド | エンドポイント | 説明 |
+| :--- | :--- | :--- |
+| GET | `/tasks` | 掃除タスク一覧を取得 |
+| POST | `/tasks` | 新しい掃除タスクを追加 |
+| PUT | `/tasks/{taskId}` | 掃除タスクを編集 |
+| DELETE | `/tasks/{taskId}` | 掃除タスクを削除 |
+| POST | `/tasks/{taskId}/complete` | 掃除完了の記録と次回予定日の更新 |
