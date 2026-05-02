@@ -43,8 +43,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public TaskResponse updateTask(TaskRequest taskRequest, Long id) {
-        Task task = taskRepository.findById(id)
+    public TaskResponse updateTask(TaskRequest taskRequest, Long taskId) {
+        Task task = taskRepository.findById(taskId)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "掃除タスクが見つかりませんでした"));
 
         task.setPlace(taskRequest.getPlace());
@@ -61,8 +61,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void deleteTask(Long id) {
-        Task task = taskRepository.findById(id)
+    public void deleteTask(Long taskId) {
+        Task task = taskRepository.findById(taskId)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "掃除タスクが見つかりませんでした"));
 
         taskRepository.delete(task);

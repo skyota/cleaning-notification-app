@@ -8,6 +8,6 @@ import com.example.cleaning_notification_app.response.TaskResponse;
 public interface TaskService {
     List<TaskResponse> getAllTasks();
     TaskResponse createTask(TaskRequest taskRequest);
-    TaskResponse updateTask(TaskRequest taskRequest, Long id);
-    void deleteTask(Long id);
+    TaskResponse updateTask(TaskRequest taskRequest, Long taskId);
+    void deleteTask(Long taskId);
 }
