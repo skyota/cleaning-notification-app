@@ -1,7 +1,6 @@
 package com.example.cleaning_notification_app.entity;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
