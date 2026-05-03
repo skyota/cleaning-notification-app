@@ -9,6 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,32 @@ public class TaskServiceImplTest {
 
     @InjectMocks
     private TaskServiceImpl taskService;
+
+    @Test
+    @DisplayName("タスク一覧を全権取得できること")
+    void getAllTasks_Success() {
+        Task task1 = new Task();
+        task1.setPlace("場所1");
+        task1.setTarget("対象1");
+        task1.setIntervalDays(7);
+        task1.setMethod("方法1");
+        task1.setNextDueDate(LocalDate.now());
+        Task task2 = new Task();
+        task2.setPlace("場所2");
+        task2.setTarget("対象2");
+        task2.setIntervalDays(3);
+        task2.setMethod("方法2");
+        task2.setNextDueDate(LocalDate.now());
+        when(taskRepository.findAll()).thenReturn(List.of(task1, task2));
+
+        List<TaskResponse> responses = taskService.getAllTasks();
+
+        assertAll(
+            () -> assertEquals(2, responses.size()),
+            () -> assertEquals("場所1", responses.get(0).getPlace()),
+            () -> assertEquals("場所2", responses.get(1).getPlace())
+        );
+    }
 
     @Test
     @DisplayName("新しい掃除タスクを正常に保存できること")
@@ -64,5 +92,66 @@ public class TaskServiceImplTest {
 
         // リポジトリのsaveメソッドが本当に1回だけ呼ばれたか確認
         verify(taskRepository, times(1)).save(any(Task.class));
+    }
+
+    @Test
+    @DisplayName("掃除タスクを更新できること")
+    void updateTask_Success() {
+        Long taskId = 1l;
+
+        Task existingTask = new Task();
+        existingTask.setId(taskId);
+        existingTask.setPlace("お風呂");
+        existingTask.setTarget("浴槽");
+        existingTask.setIntervalDays(7);
+        existingTask.setMethod("洗剤で洗う");
+        existingTask.setNextDueDate(LocalDate.now());
+
+        TaskRequest updateRequest = new TaskRequest("キッチン", "換気扇", 30, "重曹で洗う");
+
+        Task updateTask = new Task();
+        updateTask.setId(taskId);
+        updateTask.setPlace("キッチン");
+        updateTask.setTarget("換気扇");
+        updateTask.setIntervalDays(30);
+        updateTask.setMethod("重曹で洗う");
+        updateTask.setNextDueDate(LocalDate.now());
+
+        when(taskRepository.findById(taskId)).thenReturn(Optional.of(existingTask));
+        when(taskRepository.save(any(Task.class))).thenReturn(updateTask);
+
+        TaskResponse response = taskService.updateTask(updateRequest, taskId);
+
+        assertAll("更新レスポンスの検証",
+            () -> assertEquals(taskId, response.getId()),
+            () -> assertEquals("キッチン", response.getPlace()),
+            () -> assertEquals("換気扇", response.getTarget()),
+            () -> assertEquals(30, response.getIntervalDays()),
+            () -> assertEquals("重曹で洗う", response.getMethod())
+        );
+
+        verify(taskRepository, times(1)).findById(taskId);
+        verify(taskRepository, times(1)).save(any(Task.class));
+    }
+
+    @Test
+    @DisplayName("掃除タスクを削除できること")
+    void deleteTask_Success() {
+        Long taskId = 1L;
+
+        Task existingTask = new Task();
+        existingTask.setId(taskId);
+        existingTask.setPlace("お風呂");
+        existingTask.setTarget("浴槽");
+        existingTask.setIntervalDays(7);
+        existingTask.setMethod("洗剤で洗う");
+        existingTask.setNextDueDate(LocalDate.now());
+
+        when(taskRepository.findById(taskId)).thenReturn(Optional.of(existingTask));
+
+        taskService.deleteTask(taskId);
+
+        verify(taskRepository, times(1)).findById(taskId);
+        verify(taskRepository, times(1)).delete(existingTask);
     }
 }
