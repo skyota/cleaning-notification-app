@@ -35,11 +35,7 @@ public class TaskServiceImplTest {
     @DisplayName("新しい掃除タスクを正常に保存できること")
     void createTask_Success() {
         // テスト用のリクエストデータを作成
-        TaskRequest request = new TaskRequest();
-        request.setPlace("お風呂");
-        request.setTarget("浴槽");
-        request.setIntervalDays(7);
-        request.setMethod("洗剤で洗う");
+        TaskRequest request = new TaskRequest("お風呂", "浴槽", 7, "洗剤で洗う");
 
         // リポジトリが保存した後に返してくる「完成したデータ」を準備
         Task savedTask = new Task();

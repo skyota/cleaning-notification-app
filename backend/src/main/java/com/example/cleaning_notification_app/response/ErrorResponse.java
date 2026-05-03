@@ -9,5 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ErrorResponse {
     private String message;
-    private Map<String , String> errors; // key: フィールド名、value: エラーメッセージ
+    private Map<String, String> errors; // key: フィールド名、value: エラーメッセージ
 }
