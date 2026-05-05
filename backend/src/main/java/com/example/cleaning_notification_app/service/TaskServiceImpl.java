@@ -2,12 +2,11 @@ package com.example.cleaning_notification_app.service;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.example.cleaning_notification_app.entity.Task;
+import com.example.cleaning_notification_app.exception.ResourceNotFoundException;
 import com.example.cleaning_notification_app.repository.TaskRepository;
 import com.example.cleaning_notification_app.request.TaskRequest;
 import com.example.cleaning_notification_app.response.TaskResponse;
@@ -45,7 +44,7 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     public TaskResponse updateTask(TaskRequest taskRequest, Long taskId) {
         Task task = taskRepository.findById(taskId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "掃除タスクが見つかりませんでした"));
+                        .orElseThrow(() -> new ResourceNotFoundException("掃除タスクが見つかりませんでした。ID: " + taskId));
 
         task.setPlace(taskRequest.getPlace());
         task.setTarget(taskRequest.getTarget());
@@ -63,7 +62,7 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     public void deleteTask(Long taskId) {
         Task task = taskRepository.findById(taskId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "掃除タスクが見つかりませんでした"));
+                        .orElseThrow(() -> new ResourceNotFoundException("掃除タスクが見つかりませんでした。ID: " + taskId));
 
         taskRepository.delete(task);
     }

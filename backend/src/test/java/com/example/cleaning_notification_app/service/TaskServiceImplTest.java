@@ -3,6 +3,7 @@ package com.example.cleaning_notification_app.service;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -20,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.cleaning_notification_app.entity.Task;
+import com.example.cleaning_notification_app.exception.ResourceNotFoundException;
 import com.example.cleaning_notification_app.repository.TaskRepository;
 import com.example.cleaning_notification_app.request.TaskRequest;
 import com.example.cleaning_notification_app.response.TaskResponse;
@@ -97,7 +99,7 @@ public class TaskServiceImplTest {
     @Test
     @DisplayName("掃除タスクを更新できること")
     void updateTask_Success() {
-        Long taskId = 1l;
+        Long taskId = 1L;
 
         Task existingTask = new Task();
         existingTask.setId(taskId);
@@ -153,5 +155,36 @@ public class TaskServiceImplTest {
 
         verify(taskRepository, times(1)).findById(taskId);
         verify(taskRepository, times(1)).delete(existingTask);
+    }
+
+    @Test
+    @DisplayName("存在しないIDのタスクを更新しようとした場合、例外が発生すること")
+    void updateTask_NotFound() {
+        Long nonExistentId = 999L;
+        TaskRequest request = new TaskRequest("キッチン", "換気扇", 30, "重曹で洗う");
+
+        when(taskRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            taskService.updateTask(request, nonExistentId);
+        });
+
+        verify(taskRepository, times(1)).findById(nonExistentId);
+        verify(taskRepository, times(0)).save(any(Task.class));
+    }
+
+    @Test
+    @DisplayName("存在しないIDのタスクを削除しようとした場合、例外が発生すること")
+    void deleteTask_NotFound() {
+        Long nonExistentId = 999L;
+        
+        when(taskRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            taskService.deleteTask(nonExistentId);
+        });
+
+        verify(taskRepository, times(1)).findById(nonExistentId);
+        verify(taskRepository, times(0)).delete(any(Task.class));
     }
 }
