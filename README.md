@@ -34,8 +34,8 @@ erDiagram
 ### API エンドポイント
 | メソッド | エンドポイント | 説明 |
 | :--- | :--- | :--- |
-| GET | `/tasks` | 掃除タスク一覧を取得 |
-| POST | `/tasks` | 新しい掃除タスクを追加 |
-| PUT | `/tasks/{taskId}` | 掃除タスクを編集 |
-| DELETE | `/tasks/{taskId}` | 掃除タスクを削除 |
-| POST | `/tasks/{taskId}/complete` | 掃除完了の記録と次回予定日の更新 |
+| GET | `/api/tasks` | 掃除タスク一覧を取得 |
+| POST | `/api/tasks` | 新しい掃除タスクを追加 |
+| PUT | `/api/tasks/{taskId}` | 掃除タスクを編集 |
+| DELETE | `/api/tasks/{taskId}` | 掃除タスクを削除 |
+| POST | `/api/tasks/{taskId}/complete` | 掃除完了の記録と次回予定日の更新 |
