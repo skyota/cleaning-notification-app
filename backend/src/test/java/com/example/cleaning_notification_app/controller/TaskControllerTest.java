@@ -9,7 +9,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.cleaning_notification_app.request.TaskRequest;
-import com.example.cleaning_notification_app.service.TaskServiceImpl;
+import com.example.cleaning_notification_app.service.TaskService;
 
 import tools.jackson.databind.ObjectMapper;
 
@@ -26,10 +26,10 @@ public class TaskControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private TaskServiceImpl taskServiceImpl;
+    private TaskService taskService;
 
     @Test
-    @DisplayName("バリテーションエラー：不正な入力値の場合、404エラーが返ること")
+    @DisplayName("バリテーションエラー：不正な入力値の場合、400エラーが返ること")
     void createTask_ValidationError_Returns404() throws Exception {
         TaskRequest invalidRequest = new TaskRequest("", "浴槽", -1, "洗剤で洗う");
 

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,7 +37,7 @@ public class TaskServiceImplTest {
     private TaskServiceImpl taskService;
 
     @Test
-    @DisplayName("タスク一覧を全権取得できること")
+    @DisplayName("タスク一覧を全件取得できること")
     void getAllTasks_Success() {
         Task task1 = new Task();
         task1.setPlace("場所1");
@@ -59,6 +60,8 @@ public class TaskServiceImplTest {
             () -> assertEquals("場所1", responses.get(0).getPlace()),
             () -> assertEquals("場所2", responses.get(1).getPlace())
         );
+
+        verify(taskRepository, times(1)).findAll();
     }
 
     @Test
@@ -170,7 +173,7 @@ public class TaskServiceImplTest {
         });
 
         verify(taskRepository, times(1)).findById(nonExistentId);
-        verify(taskRepository, times(0)).save(any(Task.class));
+        verify(taskRepository, never()).save(any(Task.class));
     }
 
     @Test
@@ -185,6 +188,6 @@ public class TaskServiceImplTest {
         });
 
         verify(taskRepository, times(1)).findById(nonExistentId);
-        verify(taskRepository, times(0)).delete(any(Task.class));
+        verify(taskRepository, never()).delete(any(Task.class));
     }
 }
